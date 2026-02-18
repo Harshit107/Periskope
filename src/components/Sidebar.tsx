@@ -7,18 +7,49 @@ const SidebarContainer = styled.div`
   border-right: 1px solid ${COLORS.border.light};
   display: flex;
   flex-direction: column;
-  padding: 24px 0;
+  padding: 16px 0;
   flex-shrink: 0;
 `;
 
-const LogoArea = styled.div`
-  padding: 0 24px 32px 24px;
+const HeaderSection = styled.div`
+  padding: 0 24px 24px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+`;
+
+const HeaderText = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
+const AppTitleRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-weight: 700;
-  font-size: 20px;
+  justify-content: space-between;
+  width: 100%;
   color: ${COLORS.text.primary};
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+`;
+
+const SelectorIcon = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: ${COLORS.text.tertiary};
+  
+  svg {
+    display: block;
+  }
+`;
+
+const UserEmail = styled.span`
+  font-size: 12px;
+  color: ${COLORS.text.tertiary};
+  margin-top: 2px;
+  font-weight: 400;
 `;
 
 const NavList = styled.nav`
@@ -56,48 +87,9 @@ const Badge = styled.span`
   margin-left: auto;
 `;
 
-const UserSection = styled.div`
-  padding: 24px;
-  border-top: 1px solid ${COLORS.border.light};
+const FooterSection = styled.div`
+  padding: 16px 24px;
   margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const UserProfile = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const UserAvatar = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: ${COLORS.background.alt};
-  color: ${COLORS.text.secondary};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 600;
-`;
-
-const UserInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const UserName = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  color: ${COLORS.text.primary};
-`;
-
-const UserEmail = styled.span`
-  font-size: 12px;
-  color: ${COLORS.text.light};
 `;
 
 const HelpItem = styled.div`
@@ -107,6 +99,7 @@ const HelpItem = styled.div`
   font-size: 14px;
   color: ${COLORS.text.tertiary};
   cursor: pointer;
+  font-weight: 500;
   
   &:hover { color: ${COLORS.text.primary}; }
 `;
@@ -114,15 +107,24 @@ const HelpItem = styled.div`
 export default function Sidebar() {
   return (
     <SidebarContainer>
-      <LogoArea>
-        {/* Placeholder Logo - Simple geometric shape */}
-        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="0" width="32" height="32" rx="8" fill={COLORS.primary}/>
-            <path d="M16 8V24M8 16H24" stroke="white" strokeWidth="4" strokeLinecap="round"/> 
-            {/* Simple plus/cross for mockup */}
+      <HeaderSection>
+        {/* Logo */}
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill={COLORS.primary} />
+            <path d="M16 8C11.5817 8 8 11.5817 8 16C8 20.4183 11.5817 24 16 24C20.4183 24 24 20.4183 24 16C24 11.5817 20.4183 8 16 8ZM16 20C13.7909 20 12 18.2091 12 16C12 13.7909 13.7909 12 16 12C18.2091 12 20 13.7909 20 16C20 18.2091 18.2091 20 16 20Z" fill="white" />
         </svg>
-        <span>Periskope</span>
-      </LogoArea>
+        
+        <HeaderText>
+            <AppTitleRow>
+                Periskope
+                <SelectorIcon>
+                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginTop: -4}}><path d="M6 9l6 6 6-6"/></svg>
+                </SelectorIcon>
+            </AppTitleRow>
+            <UserEmail>harshit@periskope.app</UserEmail>
+        </HeaderText>
+      </HeaderSection>
 
       <NavList>
         <NavItem>
@@ -176,27 +178,17 @@ export default function Sidebar() {
         </NavItem>
       </NavList>
 
-      <UserSection>
+      <FooterSection>
         <HelpItem>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill={COLORS.text.tertiary} xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+            {/* WhatsApp Logo for Help */}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.0117 2.00003C6.48834 2.00003 2.00003 6.48834 2.00003 12.0117C2.00003 13.9217 2.55334 15.6967 3.51834 17.2017L2.03834 22.1817L7.20668 20.8717C8.65334 21.7217 10.2983 22.1617 12.0033 22.1617H12.0117C17.535 22.1617 22.0234 17.6734 22.0234 12.15C22.0234 9.43836 20.9684 6.89169 19.0517 4.97503C17.135 3.05836 14.5967 2.00003 12.0117 2.00003ZM12.0117 20.4784C10.5183 20.4784 9.05668 20.0884 7.78003 19.3467L7.47668 19.1684L4.31834 19.9684L5.16668 16.9684L4.99003 16.6384C4.19169 15.28 3.77169 13.6817 3.77169 12.0117C3.77169 7.46836 7.46834 3.77169 12.0117 3.77169C14.2117 3.77169 16.2783 4.62836 17.8333 6.18336C19.39 7.73836 20.2467 9.80503 20.2467 12.0117C20.2467 16.555 16.5567 20.4784 12.0117 20.4784Z"/>
+                <path d="M16.565 15.2C16.315 15.075 15.09 14.475 14.865 14.4C14.64 14.325 14.475 14.275 14.31 14.525C14.145 14.775 13.67 15.325 13.52 15.5C13.37 15.675 13.22 15.7 12.97 15.575C12.72 15.45 11.9167 15.195 10.9633 14.3633C10.22 13.715 9.71833 12.915 9.56833 12.665C9.41833 12.415 9.55333 12.2767 9.67833 12.1533C9.79166 12.04 9.92833 11.8583 10.0533 11.7133C10.1783 11.5683 10.2167 11.4583 10.3 11.2917C10.3833 11.125 10.3417 10.9833 10.2783 10.8583C10.2167 10.7333 9.71833 9.53333 9.51 9.04999C9.30833 8.57999 9.09999 8.64999 8.94999 8.64999C8.80833 8.64999 8.64166 8.64333 8.47499 8.64333C8.30833 8.64333 8.03833 8.705 7.80999 8.94999C7.58166 9.19499 6.93666 9.78499 6.93666 10.99C6.93666 12.195 7.83499 13.3617 7.96166 13.5283C8.08666 13.695 9.70833 16.0967 12.1933 17.1183C12.785 17.3617 13.2467 17.5067 13.6067 17.6183C14.2083 17.8067 14.7567 17.7783 15.19 17.7133C15.6717 17.6417 16.6717 17.12 16.8783 16.545C17.0867 15.97 17.0867 15.4783 17.025 15.375C16.9633 15.2717 16.815 15.2 16.565 15.2Z" fill="#25D366"/>
+                <path d="M12.0117 20.4784C10.5183 20.4784 9.05668 20.0884 7.78003 19.3467L7.47668 19.1684L4.31834 19.9684L5.16668 16.9684L4.99003 16.6384C4.19169 15.28 3.77169 13.6817 3.77169 12.0117C3.77169 7.46836 7.46834 3.77169 12.0117 3.77169C14.2117 3.77169 16.2783 4.62836 17.8333 6.18336C19.39 7.73836 20.2467 9.80503 20.2467 12.0117C20.2467 16.555 16.5567 20.4784 12.0117 20.4784Z" fill="white" fillOpacity="0.01"/>
             </svg>
             Help & Support
         </HelpItem>
-
-        <UserProfile>
-            <UserAvatar>H</UserAvatar>
-            <UserInfo>
-                <UserName>Harshit</UserName>
-                <UserEmail>harshit@periskope.app</UserEmail>
-            </UserInfo>
-        </UserProfile>
-
-        <a style={{display: "flex", alignItems: "center", gap: 8, color: COLORS.danger, textDecoration: "none", fontSize: 13, cursor: "pointer", marginLeft: 4}}>
-             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-             Logout
-        </a>
-      </UserSection>
+      </FooterSection>
     </SidebarContainer>
   );
 }

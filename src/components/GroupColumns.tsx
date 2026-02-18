@@ -5,42 +5,39 @@ import { COLORS } from "../constants/colors";
 import type { WhatsAppGroup } from "../types/group";
 
 const ProjectTag = styled.span<{ project: string }>`
-  padding: 4px 10px;
-  border-radius: 6px; /* Rounded corners as requested */
   font-size: 13px;
   font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-
-  background-color: ${({ project }) => {
-    if (project === "Demo") return COLORS.tags.demoBg; /* blue-50 */
-    if (project === "Clients") return COLORS.tags.clientsBg; /* orange-50 */
-    return COLORS.background.alt;
-  }};
-
-  color: ${({ project }) => {
-    if (project === "Demo") return COLORS.tags.demo;
-    if (project === "Clients") return COLORS.tags.clients;
-    return COLORS.text.secondary;
-  }};
+  color: ${COLORS.text.secondary};
 `;
 
-const Label = styled.span`
-  padding: 2px 8px;
-  margin-right: 4px;
+const Label = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
   background: white;
-  border-radius: 6px;
+  border-radius: 16px; /* Capsule shape */
   font-size: 12px;
-  color: ${COLORS.text.secondary};
-  display: inline-block;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Shadow instead of border */
+  font-weight: 500;
+  color: ${COLORS.text.primary};
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   border: 1px solid ${COLORS.border.subtle};
+  margin-right: 4px;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: ${COLORS.text.tertiary}; /* Default gray dot */
+  }
 `;
 
 const HighPriorityLabel = styled(Label)`
-    background: ${COLORS.dangerBg};
-    color: ${COLORS.dangerText};
-    border-color: ${COLORS.dangerBorder};
+  &::before {
+    background-color: ${COLORS.danger}; /* Red dot */
+  }
 `;
 
 const GroupNameContainer = styled.div`
