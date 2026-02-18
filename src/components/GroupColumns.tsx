@@ -6,15 +6,15 @@ import type { WhatsAppGroup } from "../types/group";
 
 const ProjectTag = styled.span<{ project: string }>`
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 6px; /* Rounded corners as requested */
   font-size: 13px;
   font-weight: 500;
   display: inline-flex;
   align-items: center;
 
   background-color: ${({ project }) => {
-    if (project === "Demo") return COLORS.tags.demoBg;
-    if (project === "Clients") return COLORS.tags.clientsBg;
+    if (project === "Demo") return COLORS.tags.demoBg; /* blue-50 */
+    if (project === "Clients") return COLORS.tags.clientsBg; /* orange-50 */
     return COLORS.background.alt;
   }};
 
@@ -28,31 +28,33 @@ const ProjectTag = styled.span<{ project: string }>`
 const Label = styled.span`
   padding: 2px 8px;
   margin-right: 4px;
-  background: ${COLORS.background.alt};
-  border-radius: 12px;
+  background: white;
+  border-radius: 6px;
   font-size: 12px;
   color: ${COLORS.text.secondary};
   display: inline-block;
-  border: 1px solid ${COLORS.border.light};
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Shadow instead of border */
+  border: 1px solid ${COLORS.border.subtle};
 `;
 
-const AvatarPlaceholder = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: ${COLORS.secondaryLight};
-  color: ${COLORS.secondaryText};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
-  margin-right: 12px;
+const HighPriorityLabel = styled(Label)`
+    background: ${COLORS.dangerBg};
+    color: ${COLORS.dangerText};
+    border-color: ${COLORS.dangerBorder};
 `;
 
 const GroupNameContainer = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const AvatarImg = styled.img`
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 12px;
+    object-fit: cover;
+    background: ${COLORS.background.alt};
 `;
 
 const Checkbox = styled.input.attrs({ type: "checkbox" })`
@@ -61,6 +63,32 @@ const Checkbox = styled.input.attrs({ type: "checkbox" })`
   border-radius: 4px;
   border: 1px solid ${COLORS.border.medium};
   cursor: pointer;
+  accent-color: ${COLORS.primary}; /* Brand color checkbox */
+`;
+
+const MembersContainer = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const MemberAvatar = styled.div<{ $zIndex: number, $bg?: string }>`
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: ${props => props.$bg || COLORS.background.alt};
+    border: 2px solid white;
+    margin-left: -8px; /* Overlap */
+    z-index: ${props => props.$zIndex};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: ${COLORS.text.secondary};
+    font-weight: 600;
+
+    &:first-child {
+        margin-left: 0;
+    }
 `;
 
 function formatLastActive(dateString: string) {
@@ -77,6 +105,9 @@ function formatLastActive(dateString: string) {
 
   return format(date, "dd MMM");
 }
+
+// Helper to generate consistent avatar URL
+const getAvatarUrl = (seed: string) => `https://ui-avatars.com/api/?name=${encodeURIComponent(seed)}&background=random&color=fff&size=64`;
 
 export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
   {
@@ -101,10 +132,12 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
     filterFn: "includesString",
     cell: ({ row }) => {
       const name = row.original.group_name;
-      const initial = name.charAt(0);
+      // Use UI Avatars for deterministic avatars based on name
+      const avatarUrl = getAvatarUrl(name);
+      
       return (
         <GroupNameContainer>
-          <AvatarPlaceholder>{initial}</AvatarPlaceholder>
+          <AvatarImg src={avatarUrl} alt={name} />
           <span style={{ fontWeight: 500, color: COLORS.text.primary }}>{name}</span>
         </GroupNameContainer>
       );
@@ -115,7 +148,7 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
     header: "Project",
     cell: ({ row }) => (
       <ProjectTag project={row.original.project}>
-        #{row.original.project}
+        {row.original.project}
       </ProjectTag>
     ),
   },
@@ -129,10 +162,13 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
 
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {visible.map((l) => (
-            <Label key={l}>● {l}</Label>
-          ))}
-          {extra > 0 && <Label style={{background: 'white', color: COLORS.text.light}}>+{extra}</Label>}
+          {visible.map((l) => {
+              if (l === "High Priority") {
+                  return <HighPriorityLabel key={l}>{l}</HighPriorityLabel>
+              }
+              return <Label key={l}>{l}</Label>
+          })}
+          {extra > 0 && <Label style={{color: COLORS.text.light}}>+{extra}</Label>}
         </div>
       );
     },
@@ -141,7 +177,18 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
   {
     header: "Members",
     accessorKey: "members",
-    cell: ({ getValue }) => <span style={{ color: COLORS.text.muted }}>{getValue() as number}</span>
+    cell: ({ getValue }) => {
+        const count = getValue() as number;
+        // Mocking member avatars relative to count
+        return (
+            <MembersContainer>
+                <MemberAvatar $zIndex={3} $bg="#E0E7FF">A</MemberAvatar>
+                <MemberAvatar $zIndex={2} $bg="#FEF3C7">B</MemberAvatar>
+                <MemberAvatar $zIndex={1} $bg="#D1FAE5">C</MemberAvatar>
+                <span style={{marginLeft: 8, fontSize: 13, color: COLORS.text.muted}}>+{count}</span>
+            </MembersContainer>
+        )
+    }
   },
 
   {

@@ -11,10 +11,19 @@ type GroupListProps = {
 };
 
 const Container = styled.div`
-  padding: 10px 24px;
-  height: 95%;
+  padding: 0 24px 24px 24px;
+  height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const TopNav = styled.div`
+  padding: 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: ${COLORS.text.muted};
 `;
 
 const ContentArea = styled.div`
@@ -23,6 +32,9 @@ const ContentArea = styled.div`
   min-height: 0;
   gap: 0;
   border: 1px solid ${COLORS.border.light};
+  border-radius: 12px;
+  overflow: hidden;
+  background: white; 
 `;
 
 const LeftPanel = styled.div<{ $isOpen: boolean }>`
@@ -46,7 +58,7 @@ const ControlsBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 `;
 
 const SearchFilterGroup = styled.div`
@@ -56,16 +68,17 @@ const SearchFilterGroup = styled.div`
 
 const SearchInput = styled.div`
   position: relative;
-  width: 300px;
+  width: 320px;
   
   input {
     width: 100%;
-    padding: 8px 12px 8px 36px;
+    padding: 10px 12px 10px 40px;
     border: 1px solid ${COLORS.border.light};
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 14px;
     outline: none;
     color: ${COLORS.text.secondary};
+    background: white;
 
     &:focus {
       border-color: ${COLORS.primary};
@@ -75,7 +88,7 @@ const SearchInput = styled.div`
 
   svg {
     position: absolute;
-    left: 10px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: ${COLORS.text.light};
@@ -88,8 +101,8 @@ const ActionGroup = styled.div`
 `;
 
 const Button = styled.button<{ variant?: 'primary' | 'outline' }>`
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -107,6 +120,10 @@ const Button = styled.button<{ variant?: 'primary' | 'outline' }>`
   }
 `;
 
+const FilterButton = styled(Button)`
+  color: ${COLORS.text.tertiary};
+`;
+
 export default function GroupList({ groups }: GroupListProps) {
   const [search, setSearch] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
@@ -117,10 +134,16 @@ export default function GroupList({ groups }: GroupListProps) {
 
   return (
     <Container>
+      <TopNav>
+          <span>Dashboard</span>
+          <span>/</span>
+          <span style={{color: COLORS.text.primary, fontWeight: 500}}>Groups</span>
+      </TopNav>
+
       <ControlsBar>
         <SearchFilterGroup>
           <SearchInput>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input 
@@ -129,13 +152,20 @@ export default function GroupList({ groups }: GroupListProps) {
                 onChange={(e) => setSearch(e.target.value)}
             />
           </SearchInput>
+          <FilterButton variant="outline">
+               <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+               Filter
+          </FilterButton>
         </SearchFilterGroup>
 
         <ActionGroup>
-          <Button variant="primary">Bulk message</Button>
+          <Button variant="primary">
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
+              Bulk message
+          </Button>
           <Button variant="outline">
             Group Actions
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </Button>
