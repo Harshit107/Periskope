@@ -42,6 +42,13 @@ export const COLORS = {
     clientsBg: "#FFF7ED",
   },
   
+  labels: {
+      high: "#374151", // Gray 700 (High)
+      priority: "#06B6D4", // Cyan 500 (Priority)
+      pilot: "#8B5CF6", // Violet 500 (Pilot)
+      default: "#9CA3AF", // Gray 400
+  },
+  
   button: {
       primary: "#2563EB" // Blue-600 for the load button
   }

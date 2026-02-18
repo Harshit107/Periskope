@@ -1,6 +1,7 @@
 export type GroupDetail = {
   id: string
   group_id: string
+  group_name?: string
   phone_number: string
   last_active: string
   disappearing_messages: boolean

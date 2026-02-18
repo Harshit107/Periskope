@@ -4,12 +4,6 @@ import styled from "styled-components";
 import { COLORS } from "../constants/colors";
 import type { WhatsAppGroup } from "../types/group";
 
-const ProjectTag = styled.span<{ project: string }>`
-  font-size: 13px;
-  font-weight: 500;
-  color: ${COLORS.text.secondary};
-`;
-
 const Label = styled.div`
   display: inline-flex;
   align-items: center;
@@ -23,24 +17,10 @@ const Label = styled.div`
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   border: 1px solid ${COLORS.border.subtle};
   margin-right: 4px;
-
-  &::before {
-    content: '';
-    display: block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: ${COLORS.text.tertiary}; /* Default gray dot */
-  }
-`;
-
-const HighPriorityLabel = styled(Label)`
-  &::before {
-    background-color: ${COLORS.danger}; /* Red dot */
-  }
 `;
 
 const GroupNameContainer = styled.div`
+
   display: flex;
   align-items: center;
 `;
@@ -63,31 +43,6 @@ const Checkbox = styled.input.attrs({ type: "checkbox" })`
   accent-color: ${COLORS.primary}; /* Brand color checkbox */
 `;
 
-const MembersContainer = styled.div`
-    display: flex;
-    align-items: center;
-`;
-
-const MemberAvatar = styled.div<{ $zIndex: number, $bg?: string }>`
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: ${props => props.$bg || COLORS.background.alt};
-    border: 2px solid white;
-    margin-left: -8px; /* Overlap */
-    z-index: ${props => props.$zIndex};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: ${COLORS.text.secondary};
-    font-weight: 600;
-
-    &:first-child {
-        margin-left: 0;
-    }
-`;
-
 function formatLastActive(dateString: string) {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -103,8 +58,31 @@ function formatLastActive(dateString: string) {
   return format(date, "dd MMM");
 }
 
-// Helper to generate consistent avatar URL
-const getAvatarUrl = (seed: string) => `https://ui-avatars.com/api/?name=${encodeURIComponent(seed)}&background=random&color=fff&size=64`;
+// Helper to generate consistent random image URL
+const getAvatarUrl = (seed: string) => {
+    // Simple hash to get a number from string
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const id = Math.abs(hash) % 1000; // Limits to 1000 images
+    return `https://picsum.photos/id/${id}/200/200`;
+};
+
+const UnreadBadge = styled.div`
+  background-color: ${COLORS.primary};
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  height: 18px;
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+`;
 
 export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
   {
@@ -126,16 +104,18 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
   {
     header: "Group Name",
     accessorKey: "group_name",
+    size: 440,
     filterFn: "includesString",
     cell: ({ row }) => {
       const name = row.original.group_name;
-      // Use UI Avatars for deterministic avatars based on name
+      const unreadCount = row.original.unreadCount || 0; 
       const avatarUrl = getAvatarUrl(name);
       
       return (
         <GroupNameContainer>
           <AvatarImg src={avatarUrl} alt={name} />
           <span style={{ fontWeight: 500, color: COLORS.text.primary }}>{name}</span>
+          {unreadCount > 0 && <UnreadBadge>{unreadCount}</UnreadBadge>}
         </GroupNameContainer>
       );
     }
@@ -143,15 +123,35 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
 
   {
     header: "Project",
-    cell: ({ row }) => (
-      <ProjectTag project={row.original.project}>
-        {row.original.project}
-      </ProjectTag>
-    ),
+    accessorKey: "project",
+    size: 160,
+    cell: ({ row }) => {
+       const val = row.original.project;
+       const isDemo = val === "Demo" || val === "Internal";
+       const color = isDemo ? COLORS.tags.demo : COLORS.tags.clients;
+       const bgColor = isDemo ? COLORS.tags.demoBg : COLORS.tags.clientsBg;
+       const text = isDemo ? "# Demo" : "# Clients";
+
+       return (
+           <span style={{
+               backgroundColor: bgColor,
+               color: color,
+               padding: "4px 10px",
+               borderRadius: "6px",
+               fontSize: "13px",
+               fontWeight: 500,
+               display: "inline-block"
+           }}>
+               {text}
+           </span>
+       )
+    },
   },
 
   {
     header: "Labels",
+    accessorKey: "labels",
+    size: 220,
     cell: ({ row }) => {
       const labels = row.original.labels || [];
       const visible = labels.slice(0, 2);
@@ -160,10 +160,26 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {visible.map((l) => {
-              if (l === "High Priority") {
-                  return <HighPriorityLabel key={l}>{l}</HighPriorityLabel>
-              }
-              return <Label key={l}>{l}</Label>
+              let dotColor = COLORS.labels.default;
+              let labelText = l;
+
+              // Logic to determine color based on text matching "High", "Priority", "Pilot"
+              if (l.includes("High")) dotColor = COLORS.labels.high;
+              else if (l.includes("Priority") || l.includes("Prio")) dotColor = COLORS.labels.priority;
+              else if (l.includes("Pilot")) dotColor = COLORS.labels.pilot;
+
+              return (
+                  <Label key={l} style={{ gap: 6 }}>
+                      <span style={{
+                          display: "block",
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: dotColor
+                      }} />
+                      {labelText}
+                  </Label>
+              )
           })}
           {extra > 0 && <Label style={{color: COLORS.text.light}}>+{extra}</Label>}
         </div>
@@ -174,22 +190,25 @@ export const groupColumns: ColumnDef<WhatsAppGroup>[] = [
   {
     header: "Members",
     accessorKey: "members",
-    cell: ({ getValue }) => {
-        const count = getValue() as number;
-        // Mocking member avatars relative to count
+    size: 100,
+    cell: ({ row }) => {
+        // Just show count as requested
+        // The accessor 'members' usually returns a number in our mock data based on previous file view
+        // If it's an array we length it, if it's number we display it.
+        const val = row.original.members;
+        const count = Array.isArray(val) ? val.length : val;
+        
         return (
-            <MembersContainer>
-                <MemberAvatar $zIndex={3} $bg="#E0E7FF">A</MemberAvatar>
-                <MemberAvatar $zIndex={2} $bg="#FEF3C7">B</MemberAvatar>
-                <MemberAvatar $zIndex={1} $bg="#D1FAE5">C</MemberAvatar>
-                <span style={{marginLeft: 8, fontSize: 13, color: COLORS.text.muted}}>+{count}</span>
-            </MembersContainer>
+            <span style={{ fontSize: 13, color: COLORS.text.secondary }}>
+                {count}
+            </span>
         )
     }
   },
 
   {
     header: "Last Active",
+    size: 120,
     cell: ({ row }) => <span style={{ color: COLORS.text.muted }}>{formatLastActive(row.original.last_active)}</span>,
   },
 ];

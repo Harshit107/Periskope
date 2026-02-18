@@ -1,10 +1,10 @@
 import {
-    flexRender,
-    getCoreRowModel,
-    getPaginationRowModel,
-    useReactTable,
-    type ColumnDef,
-    type RowSelectionState
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+  type ColumnDef,
+  type RowSelectionState
 } from "@tanstack/react-table";
 import { useState } from "react";
 import styled from "styled-components";
@@ -29,6 +29,18 @@ const TableScrollArea = styled.div`
   flex: 1;
   overflow: auto;
   min-height: 0;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${COLORS.border.medium};
+    border-radius: 3px;
+  }
 `;
 
 const StyledTable = styled.table`
@@ -158,30 +170,30 @@ export function DataGrid<T>({ data, columns, onRowClick }: Props<T>) {
       </TableScrollArea>
       
       <PaginationFooter>
-          <div style={{color: COLORS.text.light}}>
-             Showing 1 to {table.getRowModel().rows.length} of {data.length} entries
-          </div> 
-          
-          <div style={{display: 'flex', gap: 12, alignItems: 'center'}}>
-             <Button
+          <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+              <Button
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
+                style={{padding: '6px', minWidth: 32, display: 'flex', alignItems: 'center', justifyContent: 'center'}}
             >
-                Previous
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </Button>
-            
-            <div style={{display: "flex", gap: 4}}>
-               <div style={{width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", background: COLORS.background.alt, borderRadius: 6, fontSize: 13, fontWeight: 500}}>
-                   {table.getState().pagination.pageIndex + 1}
-               </div>
-            </div>
+
+             <span style={{fontSize: 13, fontWeight: 500, color: COLORS.text.primary}}>
+                 {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+             </span>
 
             <Button
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
+                style={{padding: '6px', minWidth: 32, display: 'flex', alignItems: 'center', justifyContent: 'center'}}
             >
-                Next
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </Button>
+
+            <span style={{fontSize: 13, color: COLORS.text.light, marginLeft: 8}}>
+                {data.length} rows
+            </span>
           </div>
       </PaginationFooter>
     </DataGridContainer>

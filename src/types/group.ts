@@ -7,4 +7,5 @@ export type WhatsAppGroup = {
   members: number;
   last_active: string;
   created_at: string;
+  unreadCount?: number;
 };

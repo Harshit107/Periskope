@@ -141,8 +141,8 @@ const SearchFilterGroup = styled.div`
 
 const SearchInput = styled.div`
   position: relative;
-  width: 320px;
-  
+  min-width: 400px;
+  box-sizing: border-box;
   input {
     width: 100%;
     padding: 10px 12px 10px 40px;
@@ -195,11 +195,12 @@ const Button = styled.button<{ variant?: 'primary' | 'outline' }>`
 
 const FilterButton = styled(Button)`
   color: ${COLORS.text.tertiary};
+  margin-left: 50px;
 `;
 
 export default function GroupList({ groups }: GroupListProps) {
   const [search, setSearch] = useState("");
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<WhatsAppGroup | null>(null);
 
   const filteredGroups = groups.filter((group) =>
     group.group_name.toLowerCase().includes(search.toLowerCase())
@@ -208,9 +209,15 @@ export default function GroupList({ groups }: GroupListProps) {
   return (
     <Container>
       <TopNav>
+        {/* ... (unchanged) ... */}
         <div className="title-area">
            {/* Groups Icon */}
-           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+           <svg width="20" height="20" viewBox="0 0 24 24" fill={COLORS.text.tertiary} xmlns="http://www.w3.org/2000/svg">
+               <path d="M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-7.5-3.25z"/>
+               <path d="M12.5 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3z"/>
+               <path d="M7.5 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3z"/>
+               <path d="M17.5 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3z"/>
+           </svg>
            groups
         </div>
         <div className="actions-area">
@@ -229,7 +236,7 @@ export default function GroupList({ groups }: GroupListProps) {
       </TopNav>
 
       <ContentArea>
-          <LeftPanel $isOpen={!!selectedGroupId}>
+          <LeftPanel $isOpen={!!selectedGroup}>
               <ControlsBar>
                 <SearchFilterGroup>
                   <SearchInput>
@@ -266,14 +273,14 @@ export default function GroupList({ groups }: GroupListProps) {
               <DataGrid 
                 data={filteredGroups} 
                 columns={groupColumns} 
-                onRowClick={(row) => setSelectedGroupId(row.id)}
+                onRowClick={(group) => setSelectedGroup(group)}
               />
           </LeftPanel>
-          <RightPanel $isOpen={!!selectedGroupId}>
-              {selectedGroupId && (
+          <RightPanel $isOpen={!!selectedGroup}>
+              {selectedGroup && (
                   <GroupDetailsPanel 
-                    groupId={selectedGroupId}
-                    onClose={() => setSelectedGroupId(null)}
+                    groupData={selectedGroup}
+                    onClose={() => setSelectedGroup(null)}
                   />
               )}
           </RightPanel>
